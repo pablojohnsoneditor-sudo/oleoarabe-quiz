@@ -1632,16 +1632,37 @@
 
   var resultCta = $('result-cta-link');
   if (resultCta) {
-    resultCta.addEventListener('click', function() {
+    resultCta.addEventListener('click', function(e) {
+      e.preventDefault();
       trackStep(15, 'cta_checkout_clicado');
-      // InitiateCheckout removido — disparado pela Payt (CAPI) para evitar duplicação
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {value: 27.00, currency: 'BRL', content_name: 'Gelatina Mounjaro', num_items: 1});
+      }
       if (typeof gtag !== 'undefined') {
         gtag('event', 'begin_checkout', {value: 27, currency: 'BRL'});
       }
+      var dest = resultCta.href;
+      setTimeout(function() { window.location.href = dest; }, 600);
     });
   }
 
-  // ===== BACK REDIRECT =====
+  // Exit CTA: InitiateCheckout + delay
+  var exitCta = $('exit-cta-btn');
+  if (exitCta) {
+    exitCta.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {value: 22.95, currency: 'BRL', content_name: 'Gelatina Mounjaro - Cupom', num_items: 1});
+      }
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'begin_checkout', {value: 22.95, currency: 'BRL'});
+      }
+      var dest = exitCta.href;
+      setTimeout(function() { window.location.href = dest; }, 600);
+    });
+  }
+
+    // ===== BACK REDIRECT =====
   history.pushState(null, '', window.location.href);
   history.pushState(null, '', window.location.href);
   window.addEventListener('popstate', function() {
