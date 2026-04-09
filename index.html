@@ -10,6 +10,19 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
 
+  <!-- UTMify Pixel -->
+  <script>
+    window.pixelId = "69c3e9065fecd49d866d96cb";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <script async src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+    data-utmify-prevent-xcod-sck
+    data-utmify-prevent-subids></script>
+
   <!-- Meta Pixel -->
   <script async="" src="https://www.clarity.ms/tag/w0hqk54ye6"></script><script async="" src="js/fbevents.js"></script><script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -1627,6 +1640,18 @@
   }
 
   // ===== RESULT CTA TRACKING =====
+  // Dynamic UTM passing to checkout
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var utmKeys = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"];
+    var extras = utmKeys.filter(function(k){ return params.has(k); }).map(function(k){ return k+"="+encodeURIComponent(params.get(k)); }).join("&");
+    if (!extras) return;
+    ["result-cta-link","exit-cta-btn"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.href = el.href + (el.href.indexOf("?") > -1 ? "&" : "?") + extras; }
+    });
+  })();
+
   var resultCta = $('result-cta-link');
   if (resultCta) {
     resultCta.addEventListener('click', function() {
