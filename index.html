@@ -312,15 +312,68 @@
     .option-btn.multi .option-check { border-radius: 4px; }
 
     /* === BODY AREA SELECTION (step 5) === */
-    .body-select-wrap { display: flex; align-items: flex-start; gap: 14px; }
-    .body-img-col { flex: 0 0 110px; position: sticky; top: 70px; }
-    .body-silhouette { width: 110px; height: auto; display: block; border-radius: 10px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.10)); }
-    .body-options-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-    @media (max-width: 360px) {
-      .body-select-wrap { flex-direction: column; align-items: stretch; }
-      .body-img-col { flex: none; width: 100%; text-align: center; }
-      .body-silhouette { width: 90px; margin: 0 auto 10px; }
+    .body-overlay-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin: 14px auto 0;
     }
+    .body-silhouette-full {
+      display: block;
+      width: 52%;
+      height: auto;
+      margin: 0 auto;
+      pointer-events: none;
+      user-select: none;
+    }
+    .body-tag {
+      position: absolute !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      background: rgba(255,255,255,0.93) !important;
+      border: 1.5px solid #2d7d46 !important;
+      border-radius: 20px !important;
+      padding: 6px 11px 6px 8px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #1e5c32 !important;
+      height: auto !important;
+      width: auto !important;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      transition: background 0.18s, color 0.18s, transform 0.1s;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .body-tag .option-check { display: none !important; }
+    .body-tag:active { transform: scale(0.96); }
+    .body-tag.selected {
+      background: #2d7d46 !important;
+      color: #fff !important;
+      border-color: #2d7d46 !important;
+    }
+    .btag-icon {
+      width: 16px; height: 16px;
+      background: #2d7d46;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.18s;
+    }
+    .body-tag.selected .btag-icon { background: rgba(255,255,255,0.3); }
+    /* Posições das tags — imagem 310x1092 a 52% de 300px = ~156px x ~550px */
+    .body-tag--rosto   { top:  7%; right: 0; }
+    .body-tag--bracos  { top: 27%; left:  0; }
+    .body-tag--barriga { top: 43%; right: 0; }
+    .body-tag--coxas   { top: 62%; left:  0; }
+    .body-tag--corpo   { bottom: 2%; left: 50%; transform: translateX(-50%); }
 
     /* === INPUT FIELDS === */
     .input-field-wrap { margin-bottom: 20px; }
@@ -980,33 +1033,14 @@
     <div class="quiz-step" data-step="5" data-progress="35">
       <div class="step-body">
         <h2 class="step-question">Qual região do corpo mais te incomoda?</h2>
-        <p class="step-microcopy">Pode marcar mais de uma. A maioria marca barriga + uma segunda.</p>
-        <div class="body-select-wrap">
-          <div class="body-img-col">
-            <img src="media/female_img.ad57b2d9.avif" alt="Silhueta feminina" class="body-silhouette">
-          </div>
-          <div class="body-options-col">
-            <button class="option-btn" data-value="Barriga" data-next="6">
-              <span class="option-check"><span class="option-check-icon">✓</span></span>
-              <span>Barriga / abdômen</span>
-            </button>
-            <button class="option-btn" data-value="Braços" data-next="6">
-              <span class="option-check"><span class="option-check-icon">✓</span></span>
-              <span>Braços</span>
-            </button>
-            <button class="option-btn" data-value="Coxas" data-next="6">
-              <span class="option-check"><span class="option-check-icon">✓</span></span>
-              <span>Coxas e pernas</span>
-            </button>
-            <button class="option-btn" data-value="Rosto" data-next="6">
-              <span class="option-check"><span class="option-check-icon">✓</span></span>
-              <span>Rosto / papada</span>
-            </button>
-            <button class="option-btn" data-value="Corpo inteiro" data-next="6">
-              <span class="option-check"><span class="option-check-icon">✓</span></span>
-              <span>O corpo inteiro</span>
-            </button>
-          </div>
+        <p class="step-microcopy">Toque na área que mais te incomoda.</p>
+        <div class="body-overlay-wrap">
+          <img src="media/female_img.ad57b2d9.avif" alt="Silhueta feminina" class="body-silhouette-full">
+          <button class="option-btn body-tag body-tag--rosto"   data-value="Rosto"        data-next="6"><span class="btag-icon">+</span>Rosto / papada</button>
+          <button class="option-btn body-tag body-tag--bracos"  data-value="Braços"       data-next="6"><span class="btag-icon">+</span>Braços</button>
+          <button class="option-btn body-tag body-tag--barriga" data-value="Barriga"      data-next="6"><span class="btag-icon">+</span>Barriga</button>
+          <button class="option-btn body-tag body-tag--coxas"   data-value="Coxas"        data-next="6"><span class="btag-icon">+</span>Coxas e pernas</button>
+          <button class="option-btn body-tag body-tag--corpo"   data-value="Corpo inteiro" data-next="6"><span class="btag-icon">+</span>Corpo inteiro</button>
         </div>
       </div>
     </div>
