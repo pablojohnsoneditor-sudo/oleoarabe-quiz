@@ -311,6 +311,17 @@
     /* Multiple selection variant */
     .option-btn.multi .option-check { border-radius: 4px; }
 
+    /* === BODY AREA SELECTION (step 5) === */
+    .body-select-wrap { display: flex; align-items: flex-start; gap: 14px; }
+    .body-img-col { flex: 0 0 110px; position: sticky; top: 70px; }
+    .body-silhouette { width: 110px; height: auto; display: block; border-radius: 10px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.10)); }
+    .body-options-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    @media (max-width: 360px) {
+      .body-select-wrap { flex-direction: column; align-items: stretch; }
+      .body-img-col { flex: none; width: 100%; text-align: center; }
+      .body-silhouette { width: 90px; margin: 0 auto 10px; }
+    }
+
     /* === INPUT FIELDS === */
     .input-field-wrap { margin-bottom: 20px; }
     .input-label {
@@ -970,27 +981,32 @@
       <div class="step-body">
         <h2 class="step-question">Qual região do corpo mais te incomoda?</h2>
         <p class="step-microcopy">Pode marcar mais de uma. A maioria marca barriga + uma segunda.</p>
-        <div class="options-list">
-          <button class="option-btn" data-value="Barriga" data-next="6">
-            <span class="option-check"><span class="option-check-icon">✓</span></span>
-            <span>Barriga / abdômen</span>
-          </button>
-          <button class="option-btn" data-value="Braços" data-next="6">
-            <span class="option-check"><span class="option-check-icon">✓</span></span>
-            <span>Braços</span>
-          </button>
-          <button class="option-btn" data-value="Coxas" data-next="6">
-            <span class="option-check"><span class="option-check-icon">✓</span></span>
-            <span>Coxas e pernas</span>
-          </button>
-          <button class="option-btn" data-value="Rosto" data-next="6">
-            <span class="option-check"><span class="option-check-icon">✓</span></span>
-            <span>Rosto / papada</span>
-          </button>
-          <button class="option-btn" data-value="Corpo inteiro" data-next="6">
-            <span class="option-check"><span class="option-check-icon">✓</span></span>
-            <span>O corpo inteiro, pra ser sincera</span>
-          </button>
+        <div class="body-select-wrap">
+          <div class="body-img-col">
+            <img src="media/female_img.ad57b2d9.avif" alt="Silhueta feminina" class="body-silhouette">
+          </div>
+          <div class="body-options-col">
+            <button class="option-btn" data-value="Barriga" data-next="6">
+              <span class="option-check"><span class="option-check-icon">✓</span></span>
+              <span>Barriga / abdômen</span>
+            </button>
+            <button class="option-btn" data-value="Braços" data-next="6">
+              <span class="option-check"><span class="option-check-icon">✓</span></span>
+              <span>Braços</span>
+            </button>
+            <button class="option-btn" data-value="Coxas" data-next="6">
+              <span class="option-check"><span class="option-check-icon">✓</span></span>
+              <span>Coxas e pernas</span>
+            </button>
+            <button class="option-btn" data-value="Rosto" data-next="6">
+              <span class="option-check"><span class="option-check-icon">✓</span></span>
+              <span>Rosto / papada</span>
+            </button>
+            <button class="option-btn" data-value="Corpo inteiro" data-next="6">
+              <span class="option-check"><span class="option-check-icon">✓</span></span>
+              <span>O corpo inteiro</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
