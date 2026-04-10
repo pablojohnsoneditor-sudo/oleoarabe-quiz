@@ -1687,30 +1687,39 @@
   }
 
   // ===== RESULT CTA TRACKING =====
-  // Dynamic UTM passing to checkout
+  // Opção 2: passar UTMs + fbclid para o checkout
+  // Opção 3: gerar event_id único para desduplicação pixel/CAPI
   (function() {
     var params = new URLSearchParams(window.location.search);
-    var utmKeys = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"];
-    var extras = utmKeys.filter(function(k){ return params.has(k); }).map(function(k){ return k+"="+encodeURIComponent(params.get(k)); }).join("&");
-    if (!extras) return;
+    // UTMs + fbclid (Opção 2)
+    var passKeys = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid"];
+    var extras = passKeys.filter(function(k){ return params.has(k); }).map(function(k){ return k+"="+encodeURIComponent(params.get(k)); }).join("&");
     ["result-cta-link","exit-cta-btn"].forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) { el.href = el.href + (el.href.indexOf("?") > -1 ? "&" : "?") + extras; }
+      if (el && extras) { el.href = el.href + (el.href.indexOf("?") > -1 ? "&" : "?") + extras; }
     });
   })();
+
+  // Gera event_id único para desduplicação pixel/CAPI (Opção 3)
+  function genEventId() {
+    return 'eid_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
 
   var resultCta = $('result-cta-link');
   if (resultCta) {
     resultCta.addEventListener('click', function(e) {
       e.preventDefault();
+      var eventId = genEventId();
       trackStep(15, 'cta_checkout_clicado');
       if (typeof fbq !== 'undefined') {
-        fbq('track', 'InitiateCheckout', {value: 27.00, currency: 'BRL', content_name: 'Gelatina Mounjaro', num_items: 1});
+        fbq('track', 'InitiateCheckout', {value: 27.00, currency: 'BRL', content_name: 'Gelatina Mounjaro', num_items: 1}, {eventID: eventId});
       }
       if (typeof gtag !== 'undefined') {
         gtag('event', 'begin_checkout', {value: 27, currency: 'BRL'});
       }
+      // Passa event_id para o checkout (UTMify usa para desduplicação)
       var dest = resultCta.href;
+      dest += (dest.indexOf('?') > -1 ? '&' : '?') + 'event_id=' + encodeURIComponent(eventId);
       setTimeout(function() { window.location.href = dest; }, 600);
     });
   }
@@ -1720,13 +1729,15 @@
   if (exitCta) {
     exitCta.addEventListener('click', function(e) {
       e.preventDefault();
+      var eventId = genEventId();
       if (typeof fbq !== 'undefined') {
-        fbq('track', 'InitiateCheckout', {value: 22.95, currency: 'BRL', content_name: 'Gelatina Mounjaro - Cupom', num_items: 1});
+        fbq('track', 'InitiateCheckout', {value: 22.95, currency: 'BRL', content_name: 'Gelatina Mounjaro - Cupom', num_items: 1}, {eventID: eventId});
       }
       if (typeof gtag !== 'undefined') {
         gtag('event', 'begin_checkout', {value: 22.95, currency: 'BRL'});
       }
       var dest = exitCta.href;
+      dest += (dest.indexOf('?') > -1 ? '&' : '?') + 'event_id=' + encodeURIComponent(eventId);
       setTimeout(function() { window.location.href = dest; }, 600);
     });
   }
