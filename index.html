@@ -1559,6 +1559,7 @@
       }
       showScreen('result');
       if (bmiData) { renderBMI(bmiData); }
+      startResultTracking();
     } else {
       var label = stepNames[stepNum] || ('step_' + stepNum);
       trackStep(stepNum, label);
@@ -1730,6 +1731,76 @@
     });
   }
 
+  // ===== RESULT PAGE ENGAGEMENT TRACKING =====
+  var resultScrollTracked = {};
+  var resultTimeTracked = {};
+
+  function startResultTracking() {
+    // Clarity funnel stage tag
+    if (typeof window.clarity === 'function') {
+      window.clarity('set', 'funnel_stage', 'resultado');
+      window.clarity('set', 'reached_resultado', 'yes');
+    }
+
+    // Time milestones: 15s, 30s, 60s, 120s on result page
+    [15, 30, 60, 120].forEach(function(sec) {
+      setTimeout(function() {
+        if (resultTimeTracked[sec]) return;
+        resultTimeTracked[sec] = true;
+        if (typeof window.clarity === 'function') {
+          window.clarity('set', 'result_tempo_' + sec + 's', 'yes');
+        }
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'result_tempo', {
+            segundos: sec,
+            event_category: 'quiz_resultado'
+          });
+        }
+      }, sec * 1000);
+    });
+
+    // Scroll depth on result page
+    var resultScreen = document.getElementById('screen-result');
+    if (!resultScreen) return;
+    window.addEventListener('scroll', function() {
+      var elHeight = resultScreen.offsetHeight;
+      if (elHeight === 0) return;
+      var scrolled = window.scrollY + window.innerHeight;
+      var pct = Math.round((scrolled / elHeight) * 100);
+      [25, 50, 75, 100].forEach(function(depth) {
+        if (!resultScrollTracked[depth] && pct >= depth) {
+          resultScrollTracked[depth] = true;
+          if (typeof window.clarity === 'function') {
+            window.clarity('set', 'result_scroll_' + depth, 'yes');
+          }
+          if (typeof gtag !== 'undefined') {
+            gtag('event', 'result_scroll', {
+              profundidade: depth,
+              event_category: 'quiz_resultado'
+            });
+          }
+        }
+      });
+    }, {passive: true});
+  }
+
+  // ===== EXIT INTENT TRACKING =====
+  function trackExitIntent(source) {
+    if (typeof window.clarity === 'function') {
+      window.clarity('set', 'exit_intent', 'yes');
+      window.clarity('set', 'exit_intent_source', source);
+    }
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'exit_intent', {
+        source: source,
+        event_category: 'quiz_engajamento'
+      });
+    }
+    if (typeof fbq !== 'undefined') {
+      fbq('trackCustom', 'ExitIntent', {source: source});
+    }
+  }
+
     // ===== BACK REDIRECT =====
   history.pushState(null, '', window.location.href);
   history.pushState(null, '', window.location.href);
@@ -1776,6 +1847,7 @@
   // Exit intent — desktop
   document.addEventListener('mouseleave', function(e) {
     if (e.clientY <= 0 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+      trackExitIntent('desktop_mouseleave');
       showExitPopup();
     }
   });
@@ -1783,6 +1855,7 @@
   // Exit intent — mobile pagehide
   window.addEventListener('pagehide', function() {
     if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+      trackExitIntent('pagehide');
       showExitPopup();
     }
   });
@@ -1790,6 +1863,7 @@
   // Exit intent — tab switch mobile
   document.addEventListener('visibilitychange', function() {
     if (document.hidden && quizStarted && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+      trackExitIntent('visibility_hidden');
       showExitPopup();
     }
   });
